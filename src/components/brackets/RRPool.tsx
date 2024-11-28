@@ -27,7 +27,7 @@ export default function RRPoolComponent({bracketData}: {bracketData: RRPool}) {
         )
     }
 
-    const checkName = (n, obj, playerName) => {
+    const checkName = (n: number, obj: any, playerName?: string) => {
         if (obj?.name == playerName) {
             return n+1;
         } else {
@@ -35,7 +35,7 @@ export default function RRPoolComponent({bracketData}: {bracketData: RRPool}) {
         }
     }
 
-    function getPlayerStandings(plMatchList: RRMatchObj[]): number[] {
+    function getPlayerStandings(plMatchList: RRMatchObj[]): number {
         // return value format: [match wins, match losses, game wins, game losses]
         let ret = [0, 0, 0, 0];
         ret[0] = plMatchList.reduce(

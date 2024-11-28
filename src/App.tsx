@@ -6,7 +6,7 @@ import Nav from 'react-bootstrap/Nav';
 import Button from 'react-bootstrap/Button';
 import Match from './components/Match.tsx';
 import Dropdown from 'react-bootstrap/Dropdown';
-import { Bracket, MatchObj, Round, Player, RRPool, RRMatch } from './utils/types.tsx';
+import { Bracket, MatchObj, Round, Player, RRPool } from './utils/types.tsx';
 import SEBracket from './components/brackets/SEBracket.tsx';
 import { createSEBracket, createRRPool } from './utils/initBrackets.tsx';
 import RRPoolComponent from './components/brackets/RRPool.tsx';
@@ -19,11 +19,11 @@ function randStr() {
 
 function App() {
     const [numPlayers, setNumPlayers] = useState(6);
-    const [roundRobinStruct, setRoundRobinStruct] = useState<RRPool>();
+    //const [roundRobinStruct, setRoundRobinStruct] = useState<RRPool>();
     const [bracketType, setBracketType] = useState<String>('Round Robin');
     const [bracketComponent, setBracketComponent] = useState((<div>No bracket to display</div>));
 
-    const handleBracketType = (event) => {
+    const handleBracketType = (event: any) => {
         setBracketType(event);
     };
 
@@ -54,7 +54,7 @@ function App() {
                 </Nav>
             </Navbar>
             <input type="number" value={numPlayers}
-                onChange={e => setNumPlayers(e.target.value)}/>
+                onChange={e => setNumPlayers(parseInt(e.target.value))}/>
             <Dropdown onSelect={handleBracketType} id="dropdown-basic-button" title="Dropdown button">
                 <Dropdown.Toggle variant='success' id='dropdown-basic'>
                     {bracketType}

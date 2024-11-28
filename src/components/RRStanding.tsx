@@ -2,7 +2,14 @@ import { useState, useEffect } from "react";
 import { RRMatchObj } from "../utils/types";
 import '../index.css';
 
-export default function RRStanding({ matches, matchRow, matchCol, playerName }) {
+export default function RRStanding({ matches, matchRow, matchCol, playerName }:
+    {
+        matches: RRMatchObj[],
+        matchRow: RRMatchObj[],
+        matchCol: RRMatchObj[],
+        playerName: String
+    }
+) {
     const [matchRowData, setMatchRowData] = useState<RRMatchObj[]>(matchRow);
     const [matchColData, setMatchColData] = useState<RRMatchObj[]>(matchCol);
 
@@ -22,7 +29,7 @@ export default function RRStanding({ matches, matchRow, matchCol, playerName }) 
         setMatchData(matches);
     }, [matches])
 
-    const checkName = (n, obj) => {
+    const checkName = (n: number, obj: any) => {
         if (obj?.name == playerName) {
             return n+1;
         } else {

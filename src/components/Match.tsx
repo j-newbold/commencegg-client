@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState, useRef } from "react";
 import { MatchObj } from '../utils/types';
 
-export default function Match(props) {
+export default function Match(props: any) {
     const [p1Win, setP1Win] = useState(false);
     const [p2Win, setP2Win] = useState(false);
     const [curMatch, setCurMatch] = useState(props.matchProp);

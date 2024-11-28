@@ -61,11 +61,11 @@ export default function RRMatch({setGameCount, secondScoreName, matchInfo, pos, 
         setShow(false);
     }
 
-    const handleP1GameChange = (e: Object) => {
+    const handleP1GameChange = (e: any) => {
         setP1GamesWonModal(e.target.value);
     }
 
-    const handleP2GameChange = (e: Object) => {
+    const handleP2GameChange = (e: any) => {
         setP2GamesWonModal(e.target.value);
     }
     
