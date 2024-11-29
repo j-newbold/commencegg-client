@@ -11,6 +11,48 @@ export default function SEBracket({bracketData}: {bracketData: Bracket}) {
     useEffect(() => {
         setBracketStruct(bracketData);
     }, [bracketData])
+
+    function setPlayerAndWinner (isP1: boolean, playerParam: Player, rInd: number, mInd: number): void{
+        setBracketStruct({ ...bracketStruct, roundList: bracketStruct!.roundList.map((rd, index) => {
+                if (rInd == index) {
+                    return { ...rd, matchList: rd.matchList.map((ma, ind) => {
+                        if (mInd == ind) {
+                            if (isP1) {
+                                return { ...ma, p1:playerParam, winner:playerParam }
+                            } else {
+                                return { ...ma, p2:playerParam, winner:playerParam }
+                            }
+                        } else {
+                            return ma;
+                        }
+                    })};
+                } else {
+                    return rd;
+                }
+            })
+        });
+    }
+
+    function setPlayer (isP1: boolean, playerParam: Player, rInd: number, mInd: number): void{
+        setBracketStruct({ ...bracketStruct, roundList: bracketStruct!.roundList.map((rd, index) => {
+                if (rInd == index) {
+                    return { ...rd, matchList: rd.matchList.map((ma, ind) => {
+                        if (mInd == ind) {
+                            if (isP1) {
+                                return { ...ma, p1:playerParam }
+                            } else {
+                                return { ...ma, p2:playerParam }
+                            }
+                        } else {
+                            return ma;
+                        }
+                    })};
+                } else {
+                    return rd;
+                }
+            })
+        });
+    }
     
     function setMatchResult (winner: Player, rInd: number, mInd: number): void {
         //const newMatchPointer = { ...matchPointer, winner: matchPointer?.p1 || null };
@@ -59,6 +101,8 @@ export default function SEBracket({bracketData}: {bracketData: Bracket}) {
                         mIndex={ind}
                         matchProp={ma}
                         setWinner={setMatchResult}
+                        setPlayer={setPlayer}
+                        setPlayerAndWinner={setPlayerAndWinner}
                     />
                 ))}
             </div>

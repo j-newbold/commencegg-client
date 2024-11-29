@@ -11,6 +11,8 @@ export default function Match(props: any) {
 
     useEffect(() => {
         setCurMatch(props.matchProp);
+        //console.log('mprop changed: ');
+        //console.log('other p1input: '+props.p1Input)
     }, [props.matchProp])
 
     useEffect(() => {
@@ -20,14 +22,16 @@ export default function Match(props: any) {
             if (props.p1Input == null) {
                 setP1Win(false);
                 setP2Win(false);
-                setCurMatch({...curMatch, p1: null, winner: null});
-                props.setWinner(null, props.rIndex, props.mIndex);
+                //setCurMatch({...curMatch, p1: null, winner: null});
+                props.setPlayerAndWinner(true, null, props.rIndex, props.mIndex);
             } else {
                 if (p1Win) {
                     //setCurMatch({...curMatch, p1: props.p1Input, winner: props.p1Input});
-                    props.setWinner(curMatch.p1, props.rIndex, props.mIndex);
+                    //console.log(curMatch.p1.name);
+                    props.setPlayerAndWinner(true, props.p1Input, props.rIndex, props.mIndex);
                 } else {
-                    setCurMatch({...curMatch, p1: props.p1Input});
+                    props.setPlayer(true, props.p1Input, props.rIndex, props.mIndex);
+                    // here we need a props.setP1 method like we have in the above if statement
                 }
             }
         }
@@ -37,17 +41,20 @@ export default function Match(props: any) {
         if (didMountP2.current < 2) {
             didMountP2.current += 1;
         } else {
+            props.setPlayer(false, props.p2Input, props.rIndex, props.mIndex);
             if (props.p2Input == null) {
                 setP2Win(false);
                 setP1Win(false);
-                setCurMatch({...curMatch, p2: null, winner: null});
-                props.setWinner(null, props.rIndex, props.mIndex);
+                //setCurMatch({...curMatch, p2: null, winner: null});
+                props.setPlayerAndWinner(false, null, props.rIndex, props.mIndex);
             } else {
                 if (p2Win) {
                     //setCurMatch({...curMatch, p2: props.p2Input, winner: props.p2Input});
-                    props.setWinner(curMatch.p2, props.rIndex, props.mIndex);
+                    //console.log(curMatch.p2.name);
+                    props.setPlayerAndWinner(false, props.p2Input, props.rIndex, props.mIndex);
                 } else {
-                    setCurMatch({...curMatch, p2: props.p2Input});
+                    props.setPlayer(false, props.p2Input, props.rIndex, props.mIndex);
+                    //setCurMatch({...curMatch, p2: props.p2Input});
                 }
             }
         }
