@@ -40,9 +40,11 @@ export type RRPool = {
 
     playerList: Player[];
 
-    matchList: RRMatchObj[][];
+    resultsList: number[][];
 
-    placements: number[];
+    placements: (number | null)[];
+
+    matchList: RRMatchObj[][];
 
     winsNeeded: number;
 

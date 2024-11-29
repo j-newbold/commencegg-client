@@ -2,63 +2,53 @@ import { useState, useEffect } from "react";
 import { RRMatchObj } from "../utils/types";
 import '../index.css';
 
-export default function RRStanding({ matches, matchRow, matchCol, playerName }:
+export default function RRStanding({ matchesWon, matchesLost, gamesWon, gamesLost}:
     {
-        matches: RRMatchObj[],
-        matchRow: RRMatchObj[],
-        matchCol: RRMatchObj[],
-        playerName: String
-    }
-) {
-    const [matchRowData, setMatchRowData] = useState<RRMatchObj[]>(matchRow);
-    const [matchColData, setMatchColData] = useState<RRMatchObj[]>(matchCol);
+        gamesWon: number,
+        gamesLost: number,
+        matchesWon: number,
+        matchesLost: number,
+        place: any
+    }) {
 
-    const [matchData, setMatchData] = useState<RRMatchObj[]>(matches);
-
-    const [playerRecord, setPlayerRecord] = useState<[Number, Number]>();
-
-    useEffect(() => {
-        setMatchRowData(matchRow);
-    }, [matchRow])
+    const [gWins, setGWins] = useState<number>(gamesWon);
+    const [gLosses, setGLosses] = useState<number>(gamesLost);
+    const [mWins, setMWins] = useState<number>(matchesWon);
+    const [mLosses, setMLosses] = useState<number>(matchesLost);
 
     useEffect(() => {
-        setMatchColData(matchCol);
-    }, [matchCol])
+        setGWins(gamesWon);
+    }, [gamesWon])
 
     useEffect(() => {
-        setMatchData(matches);
-    }, [matches])
+        setGLosses(gamesLost);
+    }, [gamesLost])
 
-    const checkName = (n: number, obj: any) => {
-        if (obj?.name == playerName) {
-            return n+1;
-        } else {
-            return n;
-        }
-    }
+    useEffect(() => {
+        setMWins(matchesWon);
+    }, [matchesWon])
+
+    useEffect(() => {
+        setMLosses(matchesLost);
+    }, [matchesLost])
 
     return (
         <td>
             <span className="match-score">
-                {matchData.reduce(
+{/*                 {matchData.reduce(
                     (n, {winner}) => checkName(n, winner), 0,
-                )}
+                )} */}
+                    {mWins}
                 {'-'}
-                {matchData.reduce(
-                    (n, {loser}) => checkName(n, loser), 0,
-                )}
+                    {mLosses}
                 {' '}
             </span>
 
             <span className="game-score">
                 {'('}
-                {matchData.reduce(
-                    (n, {gameCount}) => n+gameCount[0], 0,
-                )}
+                    {gWins}
                 {'-'}
-                {matchData.reduce(
-                    (n, {gameCount}) => n+gameCount[1], 0,
-                )}
+                    {gLosses}
                 {')'}
             </span>
         </td>

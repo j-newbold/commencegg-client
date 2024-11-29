@@ -33,10 +33,12 @@ export const createRRPool = (numPlayers: number) => {
     }
 
     let placements = new Array<number>(numPlayers).fill(0);
+    let results = new Array<number[]>(numPlayers).fill([0,0,0,0]);
     
     let ret: RRPool = {
             playerList: playerList,
             matchList: newMatchList,
+            resultsList: results,
             placements: placements,
             winsNeeded: 2,
             matchesFinished: 0
