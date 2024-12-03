@@ -3,10 +3,10 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '../../App.css';
 import Match from '../Match.tsx';
 import Dropdown from 'react-bootstrap/Dropdown';
-import { Bracket, MatchObj, Round, Player, RRPool } from '../../utils/types.tsx';
+import { SingleBracket, MatchObj, Round, Player, RRPool } from '../../utils/types.tsx';
 
-export default function SEBracket({bracketData}: {bracketData: Bracket}) {
-    const [bracketStruct, setBracketStruct] = useState<Bracket>(bracketData);
+export default function SEBracket({bracketData}: {bracketData: SingleBracket}) {
+    const [bracketStruct, setBracketStruct] = useState<SingleBracket>(bracketData);
 
     useEffect(() => {
         setBracketStruct(bracketData);

@@ -16,7 +16,7 @@ export default function Match(props: any) {
     }, [props.matchProp])
 
     useEffect(() => {
-        if (didMountP1.current < 2) {
+        if (didMountP1.current < 1) {
             didMountP1.current += 1;
         } else {
             if (props.p1Input == null) {

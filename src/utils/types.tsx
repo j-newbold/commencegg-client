@@ -9,8 +9,11 @@ export type MatchObj = {
     p2?: Player | null;
     winner: Player | null;
     loser: Player | null;
-    p1Input: [number, number, boolean] | null;
-    p2Input: [number, number, boolean] | null;
+    // the boolean denotes whether or not winner of
+    // match at [number, number, number]
+    // feeds into MatchObj (true) or loser (false)
+    p1Input: [number, number, number, boolean] | null;
+    p2Input: [number, number, number, boolean] | null;
     matchId: number;
 }
 
@@ -19,12 +22,16 @@ export type Round = {
     roundId: number;
 }
 
-export type Bracket = {
+export type SingleBracket = {
     // phaseInput
     // entrants: Player[];
     roundList: Round[];
     // results: Player[];
     // phaseOutput
+}
+
+export type ElimBracket = {
+    bracketList: SingleBracket[];
 }
 
 export type RRMatchObj = {

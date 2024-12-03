@@ -6,9 +6,9 @@ import Nav from 'react-bootstrap/Nav';
 import Button from 'react-bootstrap/Button';
 import Match from './components/Match.tsx';
 import Dropdown from 'react-bootstrap/Dropdown';
-import { Bracket, MatchObj, Round, Player, RRPool } from './utils/types.tsx';
+import { ElimBracket, MatchObj, Round, Player, RRPool } from './utils/types.tsx';
 import SEBracket from './components/brackets/SEBracket.tsx';
-import { createSEBracket, createRRPool } from './utils/initBrackets.tsx';
+import { createElimBracket, createRRPool } from './utils/initBrackets.tsx';
 import RRPoolComponent from './components/brackets/RRPool.tsx';
 
 function randStr() {
@@ -18,7 +18,7 @@ function randStr() {
 
 
 function App() {
-    const [numPlayers, setNumPlayers] = useState(6);
+    const [numPlayers, setNumPlayers] = useState(16);
     //const [roundRobinStruct, setRoundRobinStruct] = useState<RRPool>();
     const [bracketType, setBracketType] = useState<String>('Round Robin');
     const [bracketComponent, setBracketComponent] = useState((<div>No bracket to display</div>));
@@ -29,8 +29,8 @@ function App() {
 
     const createBracket = () => {
         if (bracketType == 'Double Elimination') {
-            const initialData: Bracket = createSEBracket(numPlayers);
-            setBracketComponent(<SEBracket bracketData={initialData}/>);
+            const initialData: ElimBracket = createElimBracket(numPlayers, 5);
+            setBracketComponent(<SEBracket bracketData={initialData.bracketList[0]}/>);
         } else if (bracketType == 'Round Robin') {
             const initialData: RRPool = createRRPool(numPlayers);
             setBracketComponent(<RRPoolComponent bracketData={initialData}/>);

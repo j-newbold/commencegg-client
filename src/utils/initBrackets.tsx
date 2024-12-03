@@ -1,4 +1,4 @@
-import { Player, Bracket, Round, MatchObj } from './types.tsx';
+import { Player, SingleBracket, ElimBracket, Round, MatchObj } from './types.tsx';
 import { randStr, createPlayerOrder } from './misc.tsx';
 import { RRPool, RRMatchObj } from './types.tsx';
 import RRMatch from '../components/RRMatch.tsx';
@@ -47,12 +47,12 @@ export const createRRPool = (numPlayers: number) => {
     return ret;
 }
 
-export const createSEBracket = (numPlayers: number) => {
+export const createElimBracket = (numPlayers: number, lossesToElim: number) => {
     let numRounds = Math.ceil(Math.log2(numPlayers))
     let totalSlots = Math.pow(2, numRounds);
     let playerList: Player[] = [];
-    let newBracket: Bracket = {
-        roundList: []
+    let newElimBracket: ElimBracket = {
+        bracketList: []
     };
     
     // create players
@@ -74,9 +74,92 @@ export const createSEBracket = (numPlayers: number) => {
     let seedingArr = createPlayerOrder(playerList.length);
     console.log('seeding arr: '+seedingArr);
 
-    // add players to tournament -- seeding not implemented yet!
+    // add players to tournament
+    let matchCounter:number;
+    let doubleCounter:number;
+    let increment:number;
+
     let idCounter:number = 0;
-    for (i=0;i<numRounds;i++) {
+
+    for (var k=0;k<lossesToElim;k++) {
+        let newSingleBracket: SingleBracket = {        
+            roundList: []
+        }
+
+        matchCounter = 0;
+        doubleCounter = 0;
+        increment = 1;
+        // go backward to populate list
+        while (matchCounter < playerList.length - 1 - k) {
+            let newRound: Round = {
+                matchList: [],
+                roundId: doubleCounter
+            }
+            for (let l=0;l<increment;l++) {
+                let newMatch: MatchObj = {
+                    matchId: idCounter,
+                    winner: null,
+                    loser: null,
+                    p1Input: null,
+                    p2Input: null
+                };
+                newRound.matchList?.push(newMatch);
+            }
+            matchCounter += increment;
+            doubleCounter += 1;
+            if (doubleCounter%(k+1) == 0) {
+                increment *= 2;
+            }
+            newSingleBracket.roundList.unshift(newRound)
+        }
+
+        // go forward to populate match id's
+        let prevRoundCounter: number = 0;
+        let prevMatchCounter: number = 0;
+        for (let l=0;l<newSingleBracket.roundList.length;l++) {
+            for (let m=0;m<newSingleBracket.roundList[l].matchList.length;m++) {
+                if (l == 0 && k == 0) {
+
+                } else if (l > 0 && newSingleBracket.roundList[l].matchList.length < newSingleBracket.roundList[l-1].matchList.length) {
+                    newSingleBracket.roundList[l].matchList[m].p1Input =
+                        [k,l-1,m*2,true];
+                    newSingleBracket.roundList[l].matchList[m].p2Input =
+                        [k,l-1,m*2+1,true];
+                } else {
+                    newSingleBracket.roundList[l].matchList[m].p1Input =
+                        [k-1,prevRoundCounter,prevMatchCounter,false];
+
+                    prevMatchCounter += 1;
+                    if (prevMatchCounter == newElimBracket.bracketList[k-1].roundList[prevRoundCounter].matchList.length) {
+                        prevMatchCounter = 0;
+                        prevRoundCounter += 1;
+                    }
+                    
+                    if (l == 0) {
+                        newSingleBracket.roundList[l].matchList[m].p2Input =
+                            [k-1,prevRoundCounter,prevMatchCounter,false];
+    
+                        // duplicated code!
+                        prevMatchCounter += 1;
+                        if (k > 0 && prevMatchCounter == newElimBracket.bracketList[k-1].roundList[prevRoundCounter].matchList.length) {
+                            prevMatchCounter = 0;
+                            prevRoundCounter += 1;
+                        }
+                    } else {
+                        newSingleBracket.roundList[l].matchList[m].p2Input = [k,l-1,m,true];
+                    }
+                }
+
+
+                
+
+            }
+        }
+        newElimBracket.bracketList.push(newSingleBracket);
+        console.log(newElimBracket.bracketList);
+    }
+
+    /* for (i=0;i<numRounds;i++) {
         let newRound: Round = {
             matchList: [],
             roundId: i
@@ -89,7 +172,7 @@ export const createSEBracket = (numPlayers: number) => {
                 p1Input: null,
                 p2Input: null
             };
-            if (i == 0) {
+            if (i == 0 && k == 0) {
                 newMatch.p1 = playerList[seedingArr[j*2]-1];
                 newMatch.p2 = playerList[seedingArr[j*2+1]-1];
             } else {
@@ -102,6 +185,6 @@ export const createSEBracket = (numPlayers: number) => {
             newRound.matchList?.push(newMatch);
         }
         newBracket.roundList.push(newRound);
-    }
-    return newBracket;
+    } */
+    return newElimBracket;
 }
