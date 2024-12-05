@@ -1,8 +1,8 @@
 import { createContext } from 'react';
-import { Bracket } from './types.tsx';
+import { ElimBracket } from './types.tsx';
 
-const BracketContext = createContext<Bracket | null>({
-    roundList: []
+const BracketContext = createContext<ElimBracket | null>({
+    bracketList: []
 });
 
 export default BracketContext;
