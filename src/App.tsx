@@ -20,7 +20,7 @@ function randStr() {
 function App() {
     const [numPlayers, setNumPlayers] = useState(16);
     //const [roundRobinStruct, setRoundRobinStruct] = useState<RRPool>();
-    const [bracketType, setBracketType] = useState<String>('Round Robin');
+    const [bracketType, setBracketType] = useState<String>('Double Elimination');
     const [bracketComponent, setBracketComponent] = useState((<div>No bracket to display</div>));
 
     const handleBracketType = (event: any) => {
@@ -30,7 +30,7 @@ function App() {
     const createBracket = () => {
         if (bracketType == 'Double Elimination') {
             const initialData: ElimBracket = createElimBracket(numPlayers, 5);
-            setBracketComponent(<SEBracket bracketData={initialData.bracketList[0]}/>);
+            setBracketComponent(<SEBracket bracketData={initialData}/>);
         } else if (bracketType == 'Round Robin') {
             const initialData: RRPool = createRRPool(numPlayers);
             setBracketComponent(<RRPoolComponent bracketData={initialData}/>);

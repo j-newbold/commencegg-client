@@ -11,6 +11,7 @@ export default function Match(props: any) {
 
     useEffect(() => {
         setCurMatch(props.matchProp);
+        console.log('p1 new: '+props.matchProp.p1?.name);
         //console.log('mprop changed: ');
         //console.log('other p1input: '+props.p1Input)
     }, [props.matchProp])
@@ -23,14 +24,14 @@ export default function Match(props: any) {
                 setP1Win(false);
                 setP2Win(false);
                 //setCurMatch({...curMatch, p1: null, winner: null});
-                props.setPlayerAndWinner(true, null, props.rIndex, props.mIndex);
+                props.setPlayerAndWinner(true, null, props.bIndex, props.rIndex, props.mIndex);
             } else {
                 if (p1Win) {
                     //setCurMatch({...curMatch, p1: props.p1Input, winner: props.p1Input});
-                    //console.log(curMatch.p1.name);
-                    props.setPlayerAndWinner(true, props.p1Input, props.rIndex, props.mIndex);
+                    props.setPlayerAndWinner(true, props.p1Input, props.bIndex, props.rIndex, props.mIndex);
                 } else {
-                    props.setPlayer(true, props.p1Input, props.rIndex, props.mIndex);
+                    console.log('p1input effect');
+                    props.setPlayer(true, props.p1Input, props.bIndex, props.rIndex, props.mIndex);
                     // here we need a props.setP1 method like we have in the above if statement
                 }
             }
@@ -41,19 +42,19 @@ export default function Match(props: any) {
         if (didMountP2.current < 2) {
             didMountP2.current += 1;
         } else {
-            props.setPlayer(false, props.p2Input, props.rIndex, props.mIndex);
+            props.setPlayer(false, props.p2Input, props.bIndex, props.rIndex, props.mIndex);
             if (props.p2Input == null) {
                 setP2Win(false);
                 setP1Win(false);
                 //setCurMatch({...curMatch, p2: null, winner: null});
-                props.setPlayerAndWinner(false, null, props.rIndex, props.mIndex);
+                props.setPlayerAndWinner(false, null, props.bIndex, props.rIndex, props.mIndex);
             } else {
                 if (p2Win) {
                     //setCurMatch({...curMatch, p2: props.p2Input, winner: props.p2Input});
                     //console.log(curMatch.p2.name);
-                    props.setPlayerAndWinner(false, props.p2Input, props.rIndex, props.mIndex);
+                    props.setPlayerAndWinner(false, props.p2Input, props.bIndex, props.rIndex, props.mIndex);
                 } else {
-                    props.setPlayer(false, props.p2Input, props.rIndex, props.mIndex);
+                    props.setPlayer(false, props.p2Input, props.bIndex, props.rIndex, props.mIndex);
                     //setCurMatch({...curMatch, p2: props.p2Input});
                 }
             }
@@ -65,9 +66,9 @@ export default function Match(props: any) {
             if (p2Win) {
                 setP2Win(!p2Win);
             }
-            props.setWinner(curMatch.p1, props.rIndex, props.mIndex);
+            props.setWinner(curMatch.p1, curMatch.p2, props.bIndex, props.rIndex, props.mIndex);
         } else {
-            props.setWinner(null, props.rIndex, props.mIndex);
+            props.setWinner(null, null, props.bIndex, props.rIndex, props.mIndex);
         }
         setP1Win(!p1Win);
     }
@@ -77,9 +78,9 @@ export default function Match(props: any) {
             if (p1Win) {
                 setP1Win(!p1Win);
             }
-            props.setWinner(curMatch.p2, props.rIndex, props.mIndex);
+            props.setWinner(curMatch.p2, curMatch.p1, props.bIndex, props.rIndex, props.mIndex);
         } else {
-            props.setWinner(null, props.rIndex, props.mIndex);
+            props.setWinner(null, null, props.bIndex, props.rIndex, props.mIndex);
         }
         setP2Win(!p2Win);
     }

@@ -95,6 +95,7 @@ export const createElimBracket = (numPlayers: number, lossesToElim: number) => {
                 matchList: [],
                 roundId: doubleCounter
             }
+            matchCounter += increment;
             for (let l=0;l<increment;l++) {
                 let newMatch: MatchObj = {
                     matchId: idCounter,
@@ -103,9 +104,13 @@ export const createElimBracket = (numPlayers: number, lossesToElim: number) => {
                     p1Input: null,
                     p2Input: null
                 };
+                if (k == 0 && matchCounter == playerList.length-1) {
+                    newMatch.p1 = playerList[seedingArr[idCounter*2]-1];
+                    newMatch.p2 = playerList[seedingArr[idCounter*2+1]-1];
+                    idCounter += 1
+                }
                 newRound.matchList?.push(newMatch);
             }
-            matchCounter += increment;
             doubleCounter += 1;
             if (doubleCounter%(k+1) == 0) {
                 increment *= 2;
