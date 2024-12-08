@@ -123,7 +123,7 @@ export default function SEBracket({bracketData}: {bracketData: ElimBracket}) {
             Tournament: {bracketStruct?.bracketList.map((br, bIndex) => (
                 <div className="bracket" key={String(bIndex)}
                     style={{
-                        top: String(500*bIndex)+'px',
+                        top: String(500*bIndex+25)+'px',
                         position: 'absolute'
                 }}>
                     Bracket {bIndex+1} {br.roundList.map((rd, rIndex) => (
