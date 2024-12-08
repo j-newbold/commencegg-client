@@ -15,11 +15,9 @@ function randStr() {
     return (Math.random() + 1).toString(36).substring(7);
 }
 
-
-
 function App() {
-    const [numPlayers, setNumPlayers] = useState(16);
-    //const [roundRobinStruct, setRoundRobinStruct] = useState<RRPool>();
+    const [numPlayers, setNumPlayers] = useState(7);
+    const [numLosses, setNumLosses] = useState(3);
     const [bracketType, setBracketType] = useState<String>('Double Elimination');
     const [bracketComponent, setBracketComponent] = useState((<div>No bracket to display</div>));
 
@@ -28,23 +26,29 @@ function App() {
     };
 
     const createBracket = () => {
-        if (bracketType == 'Double Elimination') {
-            const initialData: ElimBracket = createElimBracket(numPlayers, 5);
+        if (bracketType == 'Single Elimination') {
+            const initialData: ElimBracket = createElimBracket(numPlayers, 1);
             setBracketComponent(<SEBracket bracketData={initialData}/>);
-        } else if (bracketType == 'Round Robin') {
+        }
+        else if (bracketType == 'Double Elimination') {
+            const initialData: ElimBracket = createElimBracket(numPlayers, 2);
+            setBracketComponent(<SEBracket bracketData={initialData}/>);
+        } /* else if (bracketType == 'Custom Elimination') {
+            if (typeof(numLosses) == 'number') {
+                const initialData: ElimBracket = createElimBracket(numPlayers, numLosses);
+                setBracketComponent(<SEBracket bracketData={initialData}/>);
+            } else {
+                setBracketComponent(<div>error: enter number of elimination losses!</div>)
+            }
+        } */ else if (bracketType == 'Round Robin') {
             const initialData: RRPool = createRRPool(numPlayers);
             setBracketComponent(<RRPoolComponent bracketData={initialData}/>);
         } else {
-            console.log('invalid option selected');
+            setBracketComponent(<div>This tournament format is not yet supported</div>)
         }
 
         return (<div>No bracket to display</div>);
     }
-
-    // load tournament with dummy data -- can be fetched from an api later
-    
-
-
 
     return (
         <>
@@ -60,11 +64,16 @@ function App() {
                     {bracketType}
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
+                    <Dropdown.Item eventKey="Single Elimination">Single Elimination</Dropdown.Item>
                     <Dropdown.Item eventKey="Double Elimination">Double Elimination</Dropdown.Item>
+                    {/* <Dropdown.Item eventKey="Custom Elimination">Custom Elimination</Dropdown.Item> */}
                     <Dropdown.Item eventKey="Round Robin">Round Robin</Dropdown.Item>
                     <Dropdown.Item eventKey="Swiss">Swiss</Dropdown.Item>
                 </Dropdown.Menu>
             </Dropdown>
+            {/* {bracketType == 'Custom Elimination'?
+                <input type='number' value={numLosses}
+                    onChange={e => setNumLosses(parseInt(e.target.value))}/> : <></>} */}
             <Button variant="success" onClick={createBracket}>Submit</Button>
             {bracketComponent}
             

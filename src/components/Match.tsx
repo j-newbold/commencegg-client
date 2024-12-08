@@ -2,19 +2,26 @@ import { useContext, useEffect, useState, useRef } from "react";
 import { MatchObj } from '../utils/types';
 
 export default function Match(props: any) {
+    // p1Win is a boolean, p2Win is an array of booleans
     const [p1Win, setP1Win] = useState(false);
-    const [p2Win, setP2Win] = useState(false);
+    const [p2Win, setP2Win] = useState(Array(props.p2SetWinsNeeded).fill(false));
     const [curMatch, setCurMatch] = useState(props.matchProp);
 
     const didMountP1 = useRef(0);
     const didMountP2 = useRef(0);
+    const didMountP2SetWins = useRef(0);
 
     useEffect(() => {
         setCurMatch(props.matchProp);
-        console.log('p1 new: '+props.matchProp.p1?.name);
-        //console.log('mprop changed: ');
-        //console.log('other p1input: '+props.p1Input)
     }, [props.matchProp])
+
+/*     useEffect(() => {
+        if (didMountP2SetWins.current < 1) {
+            didMountP2SetWins.current += 1;
+        } else {
+            
+        }
+    }, [props.p2SetWinsNeeded]) */
 
     useEffect(() => {
         if (didMountP1.current < 1) {
@@ -22,40 +29,32 @@ export default function Match(props: any) {
         } else {
             if (props.p1Input == null) {
                 setP1Win(false);
-                setP2Win(false);
-                //setCurMatch({...curMatch, p1: null, winner: null});
+                setP2Win(Array(props.p2SetWinsNeeded).fill(false));
                 props.setPlayerAndWinner(true, null, props.bIndex, props.rIndex, props.mIndex);
             } else {
                 if (p1Win) {
-                    //setCurMatch({...curMatch, p1: props.p1Input, winner: props.p1Input});
                     props.setPlayerAndWinner(true, props.p1Input, props.bIndex, props.rIndex, props.mIndex);
                 } else {
-                    console.log('p1input effect');
                     props.setPlayer(true, props.p1Input, props.bIndex, props.rIndex, props.mIndex);
-                    // here we need a props.setP1 method like we have in the above if statement
                 }
             }
         }
     }, [props.p1Input])
 
     useEffect(() => {
-        if (didMountP2.current < 2) {
+        if (didMountP2.current < 1) {
             didMountP2.current += 1;
         } else {
             props.setPlayer(false, props.p2Input, props.bIndex, props.rIndex, props.mIndex);
             if (props.p2Input == null) {
-                setP2Win(false);
+                setP2Win(Array(props.p2SetWinsNeeded).fill(false));
                 setP1Win(false);
-                //setCurMatch({...curMatch, p2: null, winner: null});
                 props.setPlayerAndWinner(false, null, props.bIndex, props.rIndex, props.mIndex);
             } else {
-                if (p2Win) {
-                    //setCurMatch({...curMatch, p2: props.p2Input, winner: props.p2Input});
-                    //console.log(curMatch.p2.name);
+                if (p2Win[p2Win.length-1]) {
                     props.setPlayerAndWinner(false, props.p2Input, props.bIndex, props.rIndex, props.mIndex);
                 } else {
                     props.setPlayer(false, props.p2Input, props.bIndex, props.rIndex, props.mIndex);
-                    //setCurMatch({...curMatch, p2: props.p2Input});
                 }
             }
         }
@@ -63,8 +62,14 @@ export default function Match(props: any) {
 
     const handleP1Check = () => {
         if (!p1Win) {
-            if (p2Win) {
-                setP2Win(!p2Win);
+            if (p2Win[p2Win.length-1]) {
+                setP2Win(p2Win.map((curVal, index) => {
+                    if (index == p2Win.length-1) {
+                        return false;
+                    } else {
+                        return curVal;
+                    }
+                }));
             }
             props.setWinner(curMatch.p1, curMatch.p2, props.bIndex, props.rIndex, props.mIndex);
         } else {
@@ -73,16 +78,35 @@ export default function Match(props: any) {
         setP1Win(!p1Win);
     }
 
-    const handleP2Check = () => {
-        if (!p2Win) {
-            if (p1Win) {
-                setP1Win(!p1Win);
-            }
-            props.setWinner(curMatch.p2, curMatch.p1, props.bIndex, props.rIndex, props.mIndex);
+    const handleP2Check = (key: number) => {
+        if (p2Win[key] == true) {
+            setP2Win(p2Win.map((curVal, index) => {
+                if (index >= key) {
+                    return false;
+                } else {
+                    return curVal;
+                }
+            }))
         } else {
-            props.setWinner(null, null, props.bIndex, props.rIndex, props.mIndex);
+            setP2Win(p2Win.map((curVal, index) => {
+                if (index <= key) {
+                    return true;
+                } else {
+                    return curVal;
+                }
+            }))
         }
-        setP2Win(!p2Win);
+
+        if (key == p2Win.length-1) {
+            if (!p2Win[p2Win.length-1]) {
+                if (p1Win) {
+                    setP1Win(!p1Win);
+                }
+                props.setWinner(curMatch.p2, curMatch.p1, props.bIndex, props.rIndex, props.mIndex);
+            } else {
+                props.setWinner(null, null, props.bIndex, props.rIndex, props.mIndex);
+            }
+        }
     }
 
     return (
@@ -98,11 +122,14 @@ export default function Match(props: any) {
                 </div>
                 <div>
                     <span>{curMatch?.p2?.name || 'Player 2'}</span>
-                    <input
-                        type="checkbox"
-                        checked={p2Win}
-                        onChange={handleP2Check}
-                    />
+                    {Array.from({ length: props.p2SetWinsNeeded }).map((_, index) => {
+                        return <input
+                                    key={index}
+                                    type="checkbox"
+                                    checked={p2Win[index]}
+                                    onChange={(key) => {handleP2Check(index)}}
+                                />
+                    })}
                 </div>
             </div>
         </>

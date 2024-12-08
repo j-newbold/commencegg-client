@@ -2,8 +2,10 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../../App.css';
 import Match from '../Match.tsx';
+import FinalsMatch from '../FinalsMatch.tsx';
 import Dropdown from 'react-bootstrap/Dropdown';
-import { SingleBracket, MatchObj, Round, Player, RRPool, ElimBracket } from '../../utils/types.tsx';
+import { sumBooleans } from '../../utils/misc.tsx';
+import { SingleBracket, MatchObj, Round, Player, RRPool, ElimBracket, FinalsMatchObj } from '../../utils/types.tsx';
 
 export default function SEBracket({bracketData}: {bracketData: ElimBracket}) {
     const [bracketStruct, setBracketStruct] = useState<ElimBracket>(bracketData);
@@ -15,26 +17,34 @@ export default function SEBracket({bracketData}: {bracketData: ElimBracket}) {
     function setPlayerAndWinner (isP1: boolean, playerParam: Player, bInd: number, rInd: number, mInd: number): void{
         setBracketStruct((prevBracketStruct) => ({ bracketList: prevBracketStruct.bracketList.map((br, ind1) => {
             if (bInd == ind1) {
-                return {
-                    ...br, roundList: br.roundList.map((rd, index) => {
-                        if (rInd == index) {
-                            return { ...rd, matchList: rd.matchList.map((ma, ind) => {
-                                if (mInd == ind) {
-                                    if (isP1) {
-                                        console.log('set player and winner return: '+playerParam?.name);
-                                        return { ...ma, p1:playerParam, winner:playerParam }
+                if (rInd == -1 && mInd == -1 && br.finals) {
+                    if (isP1) {
+                        return {...br, finals: {...br.finals, p1:playerParam, winner:playerParam}};
+                    } else {
+                        return {...br, finals: {...br.finals, p2:playerParam, winner:playerParam}};
+                    }
+                } else {
+                    return {
+                        ...br, roundList: br.roundList.map((rd, index) => {
+                            if (rInd == index) {
+                                return { ...rd, matchList: rd.matchList.map((ma, ind) => {
+                                    if (mInd == ind) {
+                                        if (isP1) {
+                                            return { ...ma, p1:playerParam, winner:playerParam }
+                                        } else {
+                                            return { ...ma, p2:playerParam, winner:playerParam }
+                                        }
                                     } else {
-                                        return { ...ma, p2:playerParam, winner:playerParam }
+                                        return ma;
                                     }
-                                } else {
-                                    return ma;
-                                }
-                            })};
-                        } else {
-                            return rd;
-                        }
-                    })
+                                })};
+                            } else {
+                                return rd;
+                            }
+                        })
+                    }
                 }
+
             } else {
                 return br;
             }
@@ -44,26 +54,34 @@ export default function SEBracket({bracketData}: {bracketData: ElimBracket}) {
     function setPlayer (isP1: boolean, playerParam: Player, bInd: number, rInd: number, mInd: number): void{
         setBracketStruct((prevBracketStruct) => ({ bracketList: prevBracketStruct.bracketList.map((br, ind1) => {
             if (bInd == ind1) {
-                return {
-                    ...br, roundList: br.roundList.map((rd, index) => {
-                        if (rInd == index) {
-                            return { ...rd, matchList: rd.matchList.map((ma, ind) => {
-                                if (mInd == ind) {
-                                    if (isP1) {
-                                        console.log('set player return');
-                                        return { ...ma, p1:playerParam }
-                                } else {
-                                    return { ...ma, p2:playerParam }
-                                }
-                        } else {
-                            return ma;
-                        }
-                    })};
+                if (rInd == -1 && mInd == -1 && br.finals) {
+                    if (isP1) {
+                        return {...br, finals: {...br.finals, p1:playerParam}};
+                    } else {
+                        return {...br, finals: {...br.finals, p2:playerParam}};
+                    }
                 } else {
-                    return rd;
+                    return {
+                        ...br, roundList: br.roundList.map((rd, index) => {
+                            if (rInd == index) {
+                                return { ...rd, matchList: rd.matchList.map((ma, ind) => {
+                                    if (mInd == ind) {
+                                        if (isP1) {
+                                            return { ...ma, p1:playerParam }
+                                    } else {
+                                        return { ...ma, p2:playerParam }
+                                    }
+                            } else {
+                                return ma;
+                            }
+                        })};
+                    } else {
+                        return rd;
+                    }
+                        })
+                    }                    
                 }
-                    })
-                }
+
             } else {
                 return br;
             }
@@ -71,29 +89,33 @@ export default function SEBracket({bracketData}: {bracketData: ElimBracket}) {
         }))}
     
     function setMatchResult (winner: Player, loser: Player, bInd: number, rInd: number, mInd: number): void {
-        //const newMatchPointer = { ...matchPointer, winner: matchPointer?.p1 || null };
-        setBracketStruct({ ...bracketStruct, bracketList: bracketStruct.bracketList.map((br, ind1) => {
+        setBracketStruct((prevBracketStruct) => ({ bracketList: prevBracketStruct.bracketList.map((br, ind1) => {
             if (bInd == ind1) {
-                return {
-                    ...br, roundList: br.roundList.map((rd, index) => {
-                        if (rInd == index) {
-                            return { ...rd, matchList: rd.matchList.map((ma, ind) => {
-                                if (mInd == ind) {
-                                    return { ...ma, winner:winner, loser:loser }
-                                } else {
-                                    return ma;
-                                }
-                            })};
-                        } else {
-                            return rd;
-                        }
-                    })
+                if (rInd == -1 && mInd == -1 && br.finals) {
+                    return {...br, finals: {...br.finals, winner:winner, loser:loser}};
+                } else {
+                    return {
+                        ...br, roundList: br.roundList.map((rd, index) => {
+                            if (rInd == index) {
+                                return { ...rd, matchList: rd.matchList.map((ma, ind) => {
+                                    if (mInd == ind) {
+                                        return { ...ma, winner:winner, loser:loser }
+                                    } else {
+                                        return ma;
+                                    }
+                                })};
+                            } else {
+                                return rd;
+                            }
+                        })
+                    }                    
                 }
+
             } else {
                 return br;
             }
             })
-        })
+        }))
     }
 
     return (
@@ -135,10 +157,33 @@ export default function SEBracket({bracketData}: {bracketData: ElimBracket}) {
                                 setWinner={setMatchResult}
                                 setPlayer={setPlayer}
                                 setPlayerAndWinner={setPlayerAndWinner}
+                                p2SetWinsNeeded={1}
                             />
                         ))}
                     </div>
                 ))}
+                {bracketStruct.bracketList.length > 0 && bIndex < bracketStruct.bracketList.length-1 ?
+                    <div className='round' style={{
+                        position: 'absolute',
+                        left: String(240*br.roundList.length)+'px',
+                        top: '100px',
+                        width: '200px'
+                    }}>
+                        <Match
+                            p1Input={br.roundList[br.roundList.length-1]?.matchList[0]?.winner || null}
+                            p2Input={bracketStruct.bracketList[bIndex+1].finals? bracketStruct.bracketList[bIndex+1].finals?.winner : bracketStruct.bracketList[bIndex+1].roundList[bracketStruct.bracketList[bIndex+1].roundList.length-1]?.matchList[0].winner || null}
+                            bIndex={bIndex}
+                            rIndex={-1}
+                            mIndex={-1}
+                            matchProp={br.finals}
+                            setWinner={setMatchResult}
+                            setPlayer={setPlayer}
+                            setPlayerAndWinner={setPlayerAndWinner}
+                            p2SetWinsNeeded={2}
+                        />
+                    </div>
+                    : <></>
+                }
                 </div>
             ))}
         </div>

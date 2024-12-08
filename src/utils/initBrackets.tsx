@@ -1,5 +1,5 @@
-import { Player, SingleBracket, ElimBracket, Round, MatchObj } from './types.tsx';
-import { randStr, createPlayerOrder } from './misc.tsx';
+import { Player, SingleBracket, ElimBracket, Round, MatchObj, FinalsMatchObj } from './types.tsx';
+import { randStr, createPlayerOrder, sumBooleans } from './misc.tsx';
 import { RRPool, RRMatchObj } from './types.tsx';
 import RRMatch from '../components/RRMatch.tsx';
 
@@ -26,7 +26,6 @@ export const createRRPool = (numPlayers: number) => {
             }
             newMatchRow.push(newMatch);
         }
-        //console.log(newMatchRow)
         if (newMatchRow.length > 0) {
             newMatchList.push(newMatchRow);
         }
@@ -43,7 +42,6 @@ export const createRRPool = (numPlayers: number) => {
             winsNeeded: 2,
             matchesFinished: 0
     };
-    console.log(ret.matchList);
     return ret;
 }
 
@@ -72,7 +70,6 @@ export const createElimBracket = (numPlayers: number, lossesToElim: number) => {
     }
 
     let seedingArr = createPlayerOrder(playerList.length);
-    console.log('seeding arr: '+seedingArr);
 
     // add players to tournament
     let matchCounter:number;
@@ -89,6 +86,7 @@ export const createElimBracket = (numPlayers: number, lossesToElim: number) => {
         matchCounter = 0;
         doubleCounter = 0;
         increment = 1;
+        
         // go backward to populate list
         while (matchCounter < playerList.length - 1 - k) {
             let newRound: Round = {
@@ -102,7 +100,8 @@ export const createElimBracket = (numPlayers: number, lossesToElim: number) => {
                     winner: null,
                     loser: null,
                     p1Input: null,
-                    p2Input: null
+                    p2Input: null,
+                    p2SetWinsNeeded: 1
                 };
                 if (k == 0 && matchCounter == playerList.length-1) {
                     newMatch.p1 = playerList[seedingArr[idCounter*2]-1];
@@ -154,42 +153,29 @@ export const createElimBracket = (numPlayers: number, lossesToElim: number) => {
                         newSingleBracket.roundList[l].matchList[m].p2Input = [k,l-1,m,true];
                     }
                 }
-
-
-                
-
             }
         }
+
+
+
         newElimBracket.bracketList.push(newSingleBracket);
-        console.log(newElimBracket.bracketList);
     }
 
-    /* for (i=0;i<numRounds;i++) {
-        let newRound: Round = {
-            matchList: [],
-            roundId: i
-        };
-        for (var j=0;j<playerList.length/(Math.pow(2, i+1)); j++) {
-            let newMatch: MatchObj = {
-                matchId: idCounter,
+    // add finals matches
+    if (lossesToElim > 1) {
+        for (k=0;k<lossesToElim-1;k++) {
+            let newFinalsMatch: FinalsMatchObj = {
+                matchId: -1,
                 winner: null,
                 loser: null,
-                p1Input: null,
-                p2Input: null
-            };
-            if (i == 0 && k == 0) {
-                newMatch.p1 = playerList[seedingArr[j*2]-1];
-                newMatch.p2 = playerList[seedingArr[j*2+1]-1];
-            } else {
-                newMatch.p1 = null;
-                newMatch.p2 = null;
-                newMatch.p1Input = [i-1, j*2, true];
-                newMatch.p2Input = [i-1, j*2+1, true];
+                p1Input: [k,newElimBracket.bracketList[k].roundList.length,0,true],
+                p2Input: [k+1,newElimBracket.bracketList[k+1].roundList.length,0,true],
+                p2SetWinsNeeded: 0
             }
-            idCounter++;
-            newRound.matchList?.push(newMatch);
+            newElimBracket.bracketList[k].finals = newFinalsMatch;
         }
-        newBracket.roundList.push(newRound);
-    } */
+    }
+
+
     return newElimBracket;
 }

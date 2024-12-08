@@ -12,9 +12,14 @@ export type MatchObj = {
     // the boolean denotes whether or not winner of
     // match at [number, number, number]
     // feeds into MatchObj (true) or loser (false)
+    // final number is "set wins to advance"
     p1Input: [number, number, number, boolean] | null;
     p2Input: [number, number, number, boolean] | null;
+    p2SetWinsNeeded: number;
     matchId: number;
+}
+
+export type FinalsMatchObj = MatchObj & {
 }
 
 export type Round = {
@@ -23,11 +28,9 @@ export type Round = {
 }
 
 export type SingleBracket = {
-    // phaseInput
-    // entrants: Player[];
     roundList: Round[];
-    // results: Player[];
-    // phaseOutput
+
+    finals?: MatchObj | null;
 }
 
 export type ElimBracket = {

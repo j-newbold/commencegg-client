@@ -19,3 +19,7 @@ export function createPlayerOrder(numPlayers: number) {
       return out;
     }
 }
+
+export function sumBooleans(arr: boolean[]): number {
+    return arr.reduce((sum, value) => sum + (value ? 1 : 0), 0);
+}

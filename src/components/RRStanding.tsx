@@ -35,9 +35,6 @@ export default function RRStanding({ matchesWon, matchesLost, gamesWon, gamesLos
     return (
         <td>
             <span className="match-score">
-{/*                 {matchData.reduce(
-                    (n, {winner}) => checkName(n, winner), 0,
-                )} */}
                     {mWins}
                 {'-'}
                     {mLosses}

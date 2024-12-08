@@ -22,7 +22,6 @@ export default function RRPoolComponent({bracketData}: {bracketData: RRPool}) {
     }));
     
     useEffect(() => {
-        console.log('use effect');
         setPoolStruct(bracketData);
     }, [bracketData])
 
@@ -84,8 +83,6 @@ export default function RRPoolComponent({bracketData}: {bracketData: RRPool}) {
             if (index == rowId) {
                 return row.map((ma, index2) => {
                     if (index2 == maId) {
-                        // validate game count in component
-                        // console.log('found match at '+rowId+', '+maId);
                         if (games1 == poolStruct.winsNeeded) {
                             return {...ma, winner:ma.p1,
                                 loser:ma.p2,
@@ -125,28 +122,18 @@ export default function RRPoolComponent({bracketData}: {bracketData: RRPool}) {
             newPool.placements = updatePlacements(newPool);
         }
 
-        //newPool = {...newPool, placements: newPlacements};
-
         setPoolStruct(newPool);
 
 
     }
 
-    function resetStandings() {
-        console.log('resetStandings');
-    }
-
-    function calcStandings() {
-        console.log('calcStandings');
-    }
-
     return (
         <div className="tourney-holder">
-                <Button onClick={() => { console.log(poolStruct.placements)}}>Debug</Button>
+                {/* <Button onClick={() => { console.log(poolStruct.placements)}}>Debug</Button> */}
                 <table className="rr-pool-holder">
                     <tbody> 
                         <tr>
-                            <td className="rr-name-holder">{poolStruct.matchesFinished}</td>
+                            <td className="rr-name-holder"></td>
                             {poolStruct.playerList.map((e, i) => {
                                 return <td className="rr-name-holder" key={i}>
                                             {e.name}
